@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+    <h1>PC Componentes API Request</h1>
+    <div id="results"></div>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>
+        async function value() {
+            const resultsContainer = document.getElementById("results");
+            let data = '{"data":[';
+            let vs = 1;
+            for (let vs = 1; vs < 5; vs++) {
+                const apiUrl = `https://www.pccomponentes.pt/api-v1/products/search?query=jogos%20nintendo%20switch&sort=relevance&analytics=true&channel=pt&page=${vs}&pageSize=40&status[]=new&seller_type[]=pccomponentes_seller&families[]=1597`;
+
+                await axios.get(apiUrl)
+                    .then(response => {
+                        response.data.articles.forEach(product => {
+                            data += `{\"GAME\":\"${product.name}\", \"Price\":${product.promotionalPrice != null ? product.promotionalPrice : product.originalPrice}, \"Url\":\"${'__/' + product.slug}\"},`;
+                        });
+
+                    })
+                    .catch(error => {
+                        console.error("Error fetching data:", error);
+                    });
+                console.log("done " + Math.floor((new Date()).getTime() / 100000))
+            }
+            resultsContainer.innerHTML = data.substring(0, data.length - 1) + ']}';
+
+            const url = '/send';
+            const requestBody = { "searches": [{ "data": data.substring(0, data.length - 1) + ']}' }] };
+
+            try {
+                const response = await axios.post(url, requestBody);
+                console.log('Response:', response.data);
+            } catch (error) {
+                console.log('ERROR:', error);
+            }
+        }
+        
+        value();
+        setInterval(value(), 60 * 60 *60 + 20);
+    </script>
+</body>
+
+</html>
