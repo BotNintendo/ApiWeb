@@ -19,13 +19,13 @@ app.post('/send', (req, res) => {
   s = req.body;
   console.log(s);
   res.send('ok');
-})
+});
 
 app.post('/received', (req, res) => {
   res.json({ s })  // <==== req.body will be a parsed JSON object
   s = "";
   res.send('ok');
-})
+});
 
 
 module.exports = router;
